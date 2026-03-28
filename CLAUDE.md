@@ -50,6 +50,8 @@ Configure these in the Cloudflare Pages dashboard:
 
 > `HUGO_VERSION` must be set — PaperMod requires Hugo >= 0.146.0.
 
+Deployment uses Wrangler's Workers Assets (`npx wrangler versions upload`). `wrangler.jsonc` in the repo root points Wrangler at Hugo's `public/` output directory.
+
 ## Theme Updates
 
 PaperMod is pinned as a git submodule at `themes/PaperMod`.
