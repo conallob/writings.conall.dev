@@ -14,11 +14,12 @@ hugo server --buildDrafts
 
 | Setting | Value |
 |---|---|
-| Build command | `hugo --minify` |
-| Build output directory | `public` |
+| Build command | *(leave blank)* |
+| Deploy command | `sh deploy.sh` |
 | Environment variable | `HUGO_VERSION=0.147.2` |
 
 > Set `HUGO_VERSION` in the Cloudflare Pages dashboard under **Settings → Environment variables**.
+> `deploy.sh` runs `hugo --minify` then `npx wrangler versions upload` so `public/` exists when Wrangler runs.
 
 ## New Content
 

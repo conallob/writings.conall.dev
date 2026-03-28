@@ -44,13 +44,13 @@ Configure these in the Cloudflare Pages dashboard:
 
 | Setting | Value |
 |---|---|
-| Build command | `hugo --minify` |
-| Build output directory | `public` |
+| Build command | *(leave blank)* |
+| Deploy command | `sh deploy.sh` |
 | Environment variable | `HUGO_VERSION=0.147.2` |
 
 > `HUGO_VERSION` must be set — PaperMod requires Hugo >= 0.146.0.
 
-Deployment uses Wrangler's Workers Assets (`npx wrangler versions upload`). `wrangler.jsonc` in the repo root points Wrangler at Hugo's `public/` output directory.
+`deploy.sh` runs `hugo --minify` then `npx wrangler versions upload`. `wrangler.jsonc` points Wrangler at Hugo's `public/` output. Both steps must be in the same command so `public/` exists when Wrangler runs.
 
 ## Theme Updates
 
