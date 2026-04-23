@@ -57,7 +57,7 @@ url = "https://github.com/conallob"
 
 [[params.socialIcons]]
 name = "linkedin"
-url = "https://linkedin.com/in/conallob"
+url = "https://linkedin.com/in/conall"
 
 [params.assets]
 disableHLJS = false
