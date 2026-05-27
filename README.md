@@ -1,6 +1,6 @@
-# portfolio.conall.dev
+# writings.conall.dev
 
-Personal portfolio and blog, powered by [Hugo](https://gohugo.io/) with the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme.
+Personal writings and blog, powered by [Hugo](https://gohugo.io/) with the [PaperMod](https://github.com/adityatelange/hugo-PaperMod) theme.
 
 Served via [Cloudflare Pages](https://pages.cloudflare.com/).
 
