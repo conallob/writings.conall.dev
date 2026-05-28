@@ -1,0 +1,13 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    uses: conallob/.github/.github/workflows/hugo-deploy.yml@main
+    with:
+      hugo-version: '0.147.2'
+    secrets: inherit

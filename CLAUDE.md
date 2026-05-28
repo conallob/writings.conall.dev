@@ -38,20 +38,21 @@ hugo new content posts/my-post.md
 hugo new content projects/my-project.md
 ```
 
-## Cloudflare Pages Build Settings
+## Deployment
 
-Configure these in the Cloudflare Pages dashboard:
+Deploys run via GitHub Actions on push to `main`, using the reusable workflow at [`conallob/.github/.github/workflows/hugo-deploy.yml`](https://github.com/conallob/.github/blob/main/.github/workflows/hugo-deploy.yml).
 
-| Setting | Value |
+The workflow checks out the repo (including submodules), builds with Hugo, and deploys via Wrangler. `wrangler.jsonc` points Wrangler at Hugo's `public/` output.
+
+### Required GitHub secret
+
+| Secret | Value |
 |---|---|
-| Build command | `hugo --minify` |
-| Deploy command (production) | `sh deploy.sh main` |
-| Deploy command (preview) | `sh deploy.sh branch` |
-| Environment variable | `HUGO_VERSION=0.147.2` |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with Workers edit permission |
 
-> `HUGO_VERSION` must be set — PaperMod requires Hugo >= 0.146.0.
+### Cloudflare Workers dashboard
 
-`deploy.sh` is sourced from [`conallob/.github/hugo/deploy.sh`](https://github.com/conallob/.github/blob/main/hugo/deploy.sh) and runs `wrangler deploy`. `wrangler.jsonc` points Wrangler at Hugo's `public/` output, which the build command produces.
+Set all build/deploy commands to blank — GitHub Actions owns the deploy.
 
 ## Theme Updates
 
