@@ -1,12 +1,12 @@
-#!/bin/sh
-set -e
+#!/usr/bin/env bash
 
-BRANCH="${1:-branch}"
+set -euo pipefail
 
-hugo --minify
+main() {
+  local branch="${1:?Usage: deploy.sh <branch>}"
 
-if [ "$BRANCH" = "main" ]; then
+  echo "Deploying branch: ${branch}..."
   npx wrangler deploy
-else
-  npx wrangler versions upload
-fi
+}
+
+main "$@"

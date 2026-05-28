@@ -44,18 +44,14 @@ Configure these in the Cloudflare Pages dashboard:
 
 | Setting | Value |
 |---|---|
-| Build command | *(leave blank)* |
+| Build command | `hugo --minify` |
 | Deploy command (production) | `sh deploy.sh main` |
 | Deploy command (preview) | `sh deploy.sh branch` |
 | Environment variable | `HUGO_VERSION=0.147.2` |
 
 > `HUGO_VERSION` must be set — PaperMod requires Hugo >= 0.146.0.
 
-`deploy.sh` runs `hugo --minify` then the appropriate Wrangler command based on the argument:
-- `main` → `wrangler deploy` (promotes to production, serves live traffic)
-- `branch` (or any other value) → `wrangler versions upload` (stages a preview version only)
-
-`wrangler.jsonc` points Wrangler at Hugo's `public/` output. Both steps must be in the same script so `public/` exists when Wrangler runs.
+`deploy.sh` is sourced from [`conallob/.github/hugo/deploy.sh`](https://github.com/conallob/.github/blob/main/hugo/deploy.sh) and runs `wrangler deploy`. `wrangler.jsonc` points Wrangler at Hugo's `public/` output, which the build command produces.
 
 ## Theme Updates
 
