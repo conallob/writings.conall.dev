@@ -2,12 +2,28 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   deploy:
-    uses: conallob/.github/.github/workflows/hugo-deploy.yml@main
-    with:
-      hugo-version: '0.147.2'
-    secrets: inherit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - uses: actions/checkout@v4
+        with:
+          repository: conallob/.github
+          path: .shared
+
+      - name: Build
+        run: ./build.sh
+
+      - name: Deploy
+        run: .shared/hugo/deploy.sh "${{ github.ref_name }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
