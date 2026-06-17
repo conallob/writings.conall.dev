@@ -40,41 +40,17 @@ hugo new content projects/my-project.md
 
 ## Deployment
 
-Deploys are handled by Cloudflare Workers Builds, triggered on push to `main`. No GitHub Actions workflow is needed — `wrangler.jsonc` is the only deploy config.
+Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. No GitHub Actions workflow is needed.
 
-### How it works
+`wrangler.jsonc` is the deploy config — it points Wrangler at Hugo's `public/` output and is designed to be reusable across multiple Hugo sites.
 
-Cloudflare Workers Builds clones the repo and runs the `build.command` from `wrangler.jsonc` before deploying. The command:
-1. Initialises git submodules (theme)
-2. Downloads Hugo extended and puts it in `/tmp`
-3. Runs `hugo --minify` to produce `public/`
+### Cloudflare Pages dashboard settings
 
-Wrangler then deploys `public/` as a static asset Worker.
-
-### Reusable wrangler.jsonc pattern for other Hugo sites
-
-```jsonc
-{
-  "name": "<site-slug>",
-  "compatibility_date": "<today>",
-  "assets": {
-    "directory": "./public"
-  },
-  "build": {
-    "command": "git submodule update --init --recursive && curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.147.2/hugo_extended_0.147.2_linux-amd64.tar.gz | tar -xz -C /tmp hugo && /tmp/hugo --minify"
-  }
-}
-```
-
-Only `name` and the Hugo version in the download URL need to change per site.
-
-### Cleanup checklist for migrating other Hugo sites
-
-- [ ] Delete `.github/workflows/` (any deploy workflow)
-- [ ] Delete `build.sh` (or equivalent build script)
-- [ ] Ensure `wrangler.jsonc` has the `build.command` above
-- [ ] Ensure the theme is a git submodule (not a vendor copy) — the command initialises it automatically
-- [ ] Confirm Cloudflare Workers Builds is connected to the repo in the Cloudflare dashboard
+| Setting | Value |
+|---|---|
+| Build command | `hugo --minify` |
+| Build output directory | `public` |
+| Root directory | `/` |
 
 ## Theme Updates
 
