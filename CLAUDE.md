@@ -40,17 +40,9 @@ hugo new content projects/my-project.md
 
 ## Deployment
 
-Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. No GitHub Actions workflow is needed.
+Deploys are handled by Cloudflare Workers Builds, triggered on push to `main`. No GitHub Actions workflow is needed.
 
-`wrangler.jsonc` is the deploy config — it points Wrangler at Hugo's `public/` output and is designed to be reusable across multiple Hugo sites.
-
-### Cloudflare Pages dashboard settings
-
-| Setting | Value |
-|---|---|
-| Build command | `hugo --minify` |
-| Build output directory | `public` |
-| Root directory | `/` |
+`wrangler.jsonc` contains the build command — it installs Hugo, runs `hugo --minify`, and deploys `public/` as a static asset Worker.
 
 ## Theme Updates
 
