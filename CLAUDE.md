@@ -40,19 +40,17 @@ hugo new content projects/my-project.md
 
 ## Deployment
 
-Deploys run via GitHub Actions on push to `main`, using the reusable workflow at [`conallob/.github/.github/workflows/hugo-deploy.yml`](https://github.com/conallob/.github/blob/main/.github/workflows/hugo-deploy.yml).
+Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. No GitHub Actions workflow is needed.
 
-The workflow checks out the repo (including submodules), builds with Hugo, and deploys via Wrangler. `wrangler.jsonc` points Wrangler at Hugo's `public/` output.
+`wrangler.jsonc` is the deploy config — it points Wrangler at Hugo's `public/` output and is designed to be reusable across multiple Hugo sites.
 
-### Required GitHub secret
+### Cloudflare Pages dashboard settings
 
-| Secret | Value |
+| Setting | Value |
 |---|---|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with Workers edit permission |
-
-### Cloudflare Workers dashboard
-
-Set all build/deploy commands to blank — GitHub Actions owns the deploy.
+| Build command | `hugo --minify` |
+| Build output directory | `public` |
+| Root directory | `/` |
 
 ## Theme Updates
 
