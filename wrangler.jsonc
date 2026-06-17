@@ -3,5 +3,8 @@
   "compatibility_date": "2026-03-28",
   "assets": {
     "directory": "./public"
+  },
+  "build": {
+    "command": "git submodule update --init --recursive && curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.147.2/hugo_extended_0.147.2_linux-amd64.tar.gz | tar -xz -C /tmp hugo && /tmp/hugo --minify"
   }
 }
