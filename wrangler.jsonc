@@ -5,6 +5,6 @@
     "directory": "./public"
   },
   "build": {
-    "command": "git submodule update --init --recursive && curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.147.2/hugo_extended_0.147.2_linux-amd64.tar.gz | tar -xz -C /tmp hugo && /tmp/hugo --minify"
+    "command": "echo '--- env dump for baseURL diagnosis ---' && env | grep -iE '(ci|branch|deploy|pages|workers|url|version)' | grep -viE '(token|secret|key|password|auth)' | sort && echo '--- end env dump ---' && git submodule update --init --recursive && curl -fsSL https://github.com/gohugoio/hugo/releases/download/v0.147.2/hugo_extended_0.147.2_linux-amd64.tar.gz | tar -xz -C /tmp hugo && /tmp/hugo --minify"
   }
 }
