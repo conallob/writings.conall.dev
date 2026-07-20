@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "o11y-analysis-tools": {
+      "source": {
+        "source": "github",
+        "repo": "conallob/o11y-analysis-tools"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "promql-cody@o11y-analysis-tools": true
+  }
+}
