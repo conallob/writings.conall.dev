@@ -40,7 +40,7 @@ hugo new content projects/my-project.md
 
 ## Deployment
 
-Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. No GitHub Actions workflow is needed.
+Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. No GitHub Actions workflow is needed for pushes.
 
 `wrangler.jsonc` is the deploy config — it points Wrangler at Hugo's `public/` output and is designed to be reusable across multiple Hugo sites.
 
@@ -51,6 +51,22 @@ Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. N
 | Build command | `hugo --minify` |
 | Build output directory | `public` |
 | Root directory | `/` |
+
+### Scheduled posts
+
+`hugo.toml` sets `buildFuture = false`, so a post with a future `date` is excluded from the build
+until Cloudflare Pages rebuilds *after* that timestamp has passed. Since Cloudflare Pages only
+builds on push, a post scheduled for later today won't go live on its own unless something
+rebuilds the site after publish time.
+
+`.github/workflows/rebuild-for-scheduled-posts.yml` covers this: it pings a Cloudflare Pages
+[Deploy Hook](https://developers.cloudflare.com/pages/configuration/deploy-hooks/) hourly via
+`workflow_dispatch`/`schedule`, so scheduled posts go live within an hour of their timestamp
+without a manual redeploy. It needs one repo secret:
+
+- `CF_PAGES_DEPLOY_HOOK_URL` — create a Deploy Hook for this Pages project (Cloudflare dashboard →
+  Pages project → Settings → Builds & deployments → Deploy hooks) and add its URL as a GitHub
+  Actions secret under the same name.
 
 ## Theme Updates
 

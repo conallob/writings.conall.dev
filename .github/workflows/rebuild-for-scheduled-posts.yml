@@ -1,0 +1,24 @@
+name: Rebuild for Scheduled Posts
+
+# Cloudflare Pages only builds on push to main, but Hugo excludes future-dated
+# posts at build time (buildFuture = false in hugo.toml). A post scheduled for
+# a future timestamp therefore stays hidden after that timestamp passes,
+# until something triggers a fresh build. This workflow pings a Cloudflare
+# Pages Deploy Hook hourly so scheduled posts go live without a manual redeploy.
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Hourly, on the hour
+  workflow_dispatch: {}
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages deploy hook
+        run: |
+          if [ -z "${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}" ]; then
+            echo "CF_PAGES_DEPLOY_HOOK_URL secret is not set; skipping." >&2
+            exit 1
+          fi
+          curl -fsS -X POST "${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}"
