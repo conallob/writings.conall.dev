@@ -68,6 +68,11 @@ without a manual redeploy. It needs one repo secret:
   Pages project → Settings → Builds & deployments → Deploy hooks) and add its URL as a GitHub
   Actions secret under the same name.
 
+The deploy hook call is best-effort: the job never fails on a curl error (a transient failure
+just gets retried on the next hourly run, with no GitHub Actions failure notification), and each
+run writes an explicit job summary and `::notice::` annotation recording whether it succeeded,
+failed, or was skipped (missing secret) — so there's always a visible record that the cron ran.
+
 ## Theme Updates
 
 PaperMod is pinned as a git submodule at `themes/PaperMod`.

@@ -5,6 +5,12 @@ name: Rebuild for Scheduled Posts
 # a future timestamp therefore stays hidden after that timestamp passes,
 # until something triggers a fresh build. This workflow pings a Cloudflare
 # Pages Deploy Hook hourly so scheduled posts go live without a manual redeploy.
+#
+# The deploy hook call is best-effort: a transient failure here shouldn't page
+# anyone or fail the job, since the next hourly run will just try again. The
+# job itself always succeeds, and a job summary provides an explicit record
+# that the cron ran and what happened, without generating a GitHub Actions
+# failure notification.
 
 on:
   schedule:
@@ -16,9 +22,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Cloudflare Pages deploy hook
+        id: deploy-hook
         run: |
           if [ -z "${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}" ]; then
-            echo "CF_PAGES_DEPLOY_HOOK_URL secret is not set; skipping." >&2
-            exit 1
+            echo "outcome=skipped" >> "$GITHUB_OUTPUT"
+            echo "detail=CF_PAGES_DEPLOY_HOOK_URL secret is not set" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
-          curl -fsS -X POST "${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}"
+
+          http_code=$(curl -sS -o /tmp/deploy-hook-response.txt -w '%{http_code}' \
+            -X POST "${{ secrets.CF_PAGES_DEPLOY_HOOK_URL }}" || echo "curl_error")
+
+          if [ "$http_code" = "curl_error" ]; then
+            echo "outcome=failed" >> "$GITHUB_OUTPUT"
+            echo "detail=curl request errored (network or DNS failure)" >> "$GITHUB_OUTPUT"
+          elif [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "outcome=success" >> "$GITHUB_OUTPUT"
+            echo "detail=HTTP $http_code" >> "$GITHUB_OUTPUT"
+          else
+            echo "outcome=failed" >> "$GITHUB_OUTPUT"
+            echo "detail=HTTP $http_code: $(cat /tmp/deploy-hook-response.txt)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write job summary
+        if: always()
+        run: |
+          outcome="${{ steps.deploy-hook.outputs.outcome }}"
+          detail="${{ steps.deploy-hook.outputs.detail }}"
+          case "$outcome" in
+            success) icon="✅" ;;
+            skipped) icon="⏭️" ;;
+            *) icon="⚠️" ;;
+          esac
+          {
+            echo "### $icon Scheduled posts rebuild — $outcome"
+            echo ""
+            echo "- **Run:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo "- **Detail:** $detail"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=Rebuild for Scheduled Posts::$icon $outcome — $detail"
