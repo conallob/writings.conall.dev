@@ -7,7 +7,7 @@ description: "Obsidian-headless and multiple other tools combined together to cr
 params:
   githubUrl: "https://github.com/conallob/hassio-obsidian-headless"
   language: "Go"
-  stars: 1
+  stars: 2
 ---
 
 Obsidian-headless and multiple other tools combined together to create a multi functional Obsidian App for Home Assistant

@@ -1,7 +1,7 @@
 ---
 title: "o11y-analysis-tools"
 date: 2026-01-09T02:02:59Z
-lastmod: 2026-07-21T16:10:00Z
+lastmod: 2026-09-19T07:23:30Z
 draft: false
 description: "Various static analysis and testing tools for managing PromQL compatible monitoring stacks"
 params:
