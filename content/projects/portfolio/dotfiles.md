@@ -1,7 +1,7 @@
 ---
 title: "dotfiles"
 date: 2020-03-06T19:24:26Z
-lastmod: 2026-08-30T10:14:06Z
+lastmod: 2026-09-15T11:39:59Z
 draft: false
 description: "\"dot file\" configuration files for bash and a variety of command line tools across Linux, OSX and FreeBSD machines"
 params:

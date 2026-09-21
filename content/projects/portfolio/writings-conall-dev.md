@@ -1,7 +1,7 @@
 ---
 title: "writings.conall.dev"
 date: 2026-01-11T22:51:03Z
-lastmod: 2026-08-24T07:07:32Z
+lastmod: 2026-09-14T12:19:57Z
 draft: false
 description: ""
 params:
