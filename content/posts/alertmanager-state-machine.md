@@ -1,7 +1,7 @@
 ---
 title: "Alerts as a State Machine: Promote, Demote, Repeat"
 date: 2026-10-01T09:00:00+01:00
-draft: true
+draft: false
 description: "Use a single routing label in Alertmanager to turn alert lifecycle (new, stable, noisy, urgent) into a state machine where promotion and demotion are one-line changes."
 tags: ["SRE", "Observability", "Alertmanager", "Prometheus", "PromQL", "On-call"]
 categories: ["Engineering"]
