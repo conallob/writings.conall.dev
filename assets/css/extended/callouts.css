@@ -1,0 +1,45 @@
+/* Callouts, rendered from `> [!NOTE]`-style blockquotes by
+   layouts/_default/_markup/render-blockquote.html. PaperMod includes every
+   file in assets/css/extended/ after its own styles. */
+
+.callout {
+    --callout-color: rgb(9, 105, 218);
+    margin: 20px 0;
+    padding: 12px 16px;
+    border-inline-start: 4px solid var(--callout-color);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--callout-color) 8%, transparent);
+}
+
+.callout-note      { --callout-color: rgb(9, 105, 218); }
+.callout-tip       { --callout-color: rgb(26, 127, 55); }
+.callout-important { --callout-color: rgb(130, 80, 223); }
+.callout-warning   { --callout-color: rgb(154, 103, 0); }
+.callout-caution   { --callout-color: rgb(207, 34, 46); }
+
+:root[data-theme="dark"] .callout-note      { --callout-color: rgb(88, 166, 255); }
+:root[data-theme="dark"] .callout-tip       { --callout-color: rgb(63, 185, 80); }
+:root[data-theme="dark"] .callout-important { --callout-color: rgb(188, 140, 255); }
+:root[data-theme="dark"] .callout-warning   { --callout-color: rgb(210, 153, 34); }
+:root[data-theme="dark"] .callout-caution   { --callout-color: rgb(248, 81, 73); }
+
+.callout .callout-title {
+    margin: 0 0 6px;
+    font-weight: 600;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--callout-color);
+}
+
+.callout > :nth-child(2) {
+    margin-top: 0;
+}
+
+.callout > :last-child {
+    margin-bottom: 0;
+}
+
+.callout pre {
+    margin: 12px 0;
+}

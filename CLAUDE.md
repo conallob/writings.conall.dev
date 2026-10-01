@@ -52,6 +52,20 @@ Deploys are handled by Cloudflare Pages directly, triggered on push to `main`. N
 | Build output directory | `public` |
 | Root directory | `/` |
 
+### Callouts
+
+PaperMod has no callout styling, so the site adds it: `layouts/_default/_markup/render-blockquote.html`
+turns GitHub-style alert blockquotes into styled callouts, and `assets/css/extended/callouts.css`
+(auto-included by PaperMod) styles them in light and dark mode. Supported types are `NOTE`, `TIP`,
+`IMPORTANT`, `WARNING` and `CAUTION`:
+
+```markdown
+> [!TIP]
+> **Optional bold lead.** Body text, lists and code blocks all work.
+```
+
+Plain `>` blockquotes are unchanged.
+
 ### Scheduled posts
 
 `hugo.toml` sets `buildFuture = false`, so a post with a future `date` is excluded from the build
@@ -87,7 +101,8 @@ git submodule update --remote themes/PaperMod
 .
 ├── archetypes/       # Content templates
 ├── content/          # Site content (Markdown)
-├── layouts/          # Custom layout overrides (empty by default)
+├── assets/css/extended/  # Site CSS added on top of PaperMod (callouts)
+├── layouts/          # Custom layout overrides (callout blockquote render hook, head partial)
 ├── static/           # Static assets copied verbatim to public/
 │   └── _headers      # Cloudflare Pages HTTP security headers
 ├── themes/

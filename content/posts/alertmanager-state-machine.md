@@ -132,7 +132,8 @@ Demote by changing the rule's `target`, not by adding an Alertmanager route that
 `alertname`. That reintroduces the config churn and blast radius this pattern avoids, and state
 in the rule is easier to review and audit than state hidden in routing.
 
-> **Tip: test the transitions, not just the alert.** State is just a label, so tooling you
+> [!TIP]
+> **Test the transitions, not just the alert.** State is just a label, so tooling you
 > probably already have covers it:
 >
 > * A `promtool` unit test asserts the alert fires *with the right `target`* via `exp_labels`,
