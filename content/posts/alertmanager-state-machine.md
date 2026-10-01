@@ -26,11 +26,13 @@ that it describes *where an alert should go*, not merely how bad it is.)
 | `testing` | Untrusted. New, or demoted for cleanup. | Email or a Slack channel | None. Cheap to send to, fine to ignore. |
 | `ticket` | Needs an owner or follow-up, but isn't time sensitive. | Ticket queue | Someone triages it within days. |
 | `page` | Time sensitive. Must be addressed within a defined window. | Pager | A human responds within the SLO of the rotation. |
-| `uncaught` | Anything that matches none of the states above. | An email address or a ticket queue | Someone eventually notices and fixes the label. |
 
-Unlike the others, `uncaught` isn't a value you set; it's the state an alert lands in when nothing else catches it.
-Every state machine needs a defined behaviour for input it doesn't recognise, and this one is
-no exception.
+Alongside these, define one more destination, but note that it is **not a state**. `uncaught` is
+the backstop for alerts that match none of the states above, because their `target` is missing or
+misspelled. It sits explicitly *outside* the state machine: nobody sets it, nothing promotes or
+demotes into or out of it, and an alert only ever ends up there by mistake. Send it somewhere
+cheap and low-urgency, such as an email address or a ticket queue. Every router needs a defined
+answer for input it doesn't recognise, and this is that answer.
 
 The important property is that each destination has a different *cost of being wrong*. A noisy
 alert in `testing` costs nothing but a few ignored Slack messages. A noisy alert in `page` costs
@@ -58,7 +60,9 @@ groups:
           summary: "Frontend 5xx ratio above 2% for 10m"
 ```
 
-And Alertmanager routes purely on that label:
+And Alertmanager routes purely on that label. Adding, promoting, demoting or deleting an alert
+never touches this file, which is much of the appeal: Alertmanager config bugs have a large blast
+radius, so the less often it changes, the better.
 
 ```yaml
 route:
@@ -99,15 +103,15 @@ receivers:
 
 A few details are doing real work here:
 
-* **The root route is the `uncaught` state, and it is not `page`.** An alert with a missing or misspelled
-  `target` matches none of the child routes and falls through to the root receiver. That receiver
-  should be cheap and low-urgency, so failing means failing quiet, but it should also be
-  *distinct* from `testing`. `testing` is a deliberate state that people choose and expect to be
-  noisy; `uncaught` means "this alert is misrouted", and it needs an owner. An email address
-  or a ticket destination both work: use email if you have a small routing team who'll see it,
-  and a ticket if you want someone to be accountable for clearing it.
+* **The root route is the `uncaught` backstop, and it is not `page`.** An alert with a missing or
+  misspelled `target` matches none of the child routes and falls through to the root receiver.
+  That receiver should be cheap and low-urgency, so failing means failing quiet, but it should
+  also be *distinct* from `testing`. `testing` is a deliberate state that people choose and
+  expect to be noisy; `uncaught` means "this alert is misrouted", and it needs an owner. Use
+  email if you have a small routing team who'll see it, and a ticket if you want someone to be
+  accountable for clearing it.
 * **Treat anything `uncaught` as a bug.** The fix is almost always to set a valid `target`
-  on the rule, which moves the alert into the state machine proper. Pair it with a
+  on the rule, which moves the alert into the state machine. Pair it with a
   lint check in CI that rejects rules whose `target` isn't one of the known values. That's the
   kind of thing a static analysis pass over rule files is very good at, and it stops
   `uncaught` from becoming a permanent home.
@@ -145,17 +149,10 @@ was just woken up. Once the rule is fixed, it goes back through promotion like a
 Demotion should be socially cheap. If demoting feels like admitting failure, people will hold on
 to noisy pages for far too long. Make "demote first, ask questions later" the stated norm.
 
-If you want to demote without touching the rule file (for example, a rule owned by another team),
-you can also override at the Alertmanager layer by matching on `alertname` ahead of the
-`target`-based routes:
-
-```yaml
-    - matchers: [alertname="FrontendHighErrorRatio"]
-      receiver: testing   # temporary demotion, link the bug here
-```
-
-That's an escape hatch, not the default. State in the rule is easier to review and audit than
-state hidden in routing.
+Resist the urge to demote by adding an Alertmanager route that matches on `alertname`. That
+trades a one-line rule change for a change to shared routing config, which is exactly the churn
+and blast radius this pattern exists to avoid. Demotion is a change to the rule's `target`, and
+state kept in the rule is also easier to review and audit than state hidden in routing.
 
 > **Tip: test the transitions, not just the alert.** Because state is just a label, it's easy
 > to cover with the tooling you probably already have. A `promtool` unit test can assert that the
@@ -186,46 +183,37 @@ desks.
 
 Add a fourth state, `target: p0-ticket`. The flow is:
 
-1. Alertmanager routes `p0-ticket` alerts to the ticketing system, creating a ticket as usual.
+1. Alertmanager routes `p0-ticket` alerts to the ticketing system, unconditionally, exactly like
+   `ticket` but to a different receiver.
 2. Automation on the ticketing side (a trigger or webhook) flags the ticket and assigns it to a
    dedicated **p0 on-call queue**.
 3. That queue has its own **escalation policy**: if nobody acknowledges within N minutes, the
-   ticket is redirected to the real on-call queue, which pages.
-
-The result is a grace period. During business hours, the people watching the p0 queue will usually
-catch it first, without anyone being paged. Out of hours, or when nobody's looking, the
-escalation fires and it becomes a page anyway, with no human having to decide that.
-
-Alertmanager can express the business-hours side of this directly with
-[time intervals](https://prometheus.io/docs/alerting/latest/configuration/#time_interval):
+   ticket is redirected to the real on-call queue.
 
 ```yaml
-time_intervals:
-  - name: business-hours
-    time_intervals:
-      - weekdays: ['monday:friday']
-        times:
-          - start_time: '09:00'
-            end_time: '17:00'
-        location: 'Europe/Dublin'
-
-route:
-  routes:
     - matchers: [target="p0-ticket"]
       receiver: p0-ticket
-      active_time_intervals: [business-hours]
-    - matchers: [target="p0-ticket"]
-      receiver: pager         # out of hours: skip the grace period
-      mute_time_intervals: [business-hours]
+      group_wait: 1m
+      repeat_interval: 1d
 ```
 
-Whether you encode the business-hours split in Alertmanager or leave it to the escalation policy
-in the ticketing system is a judgement call. I prefer keeping Alertmanager dumb and the
-escalation policy as the single source of truth for "who gets interrupted when", since that's
-where rota changes already happen.
+The key design decision is that **Alertmanager has no notion of time here**. It's tempting to
+express "business hours" in Alertmanager, with `time_intervals` that send the alert to the p0
+queue during the day and to the pager at night. That has a flaw: the routing decision is made
+once, at the moment the alert fires. A ticket filed at 16:55 goes to the p0 queue, nobody is
+looking at it by 17:30, and Alertmanager never revisits the decision, so it languishes until
+someone happens to see it.
+
+An escalation policy is a timer on the *ticket*, not a window on the clock. The ticket escalates
+N minutes after it was created without an acknowledgement, whether that's 10:00 on a Tuesday or
+16:55 on a Friday. During working hours, the people watching the p0 queue will usually catch it
+first and nobody is paged. Otherwise the escalation fires and it reaches the real on-call queue
+anyway, with no human having to decide that. It also keeps "who gets interrupted when" in one
+place, the rota and escalation policy, which is where those changes already happen.
 
 The point is that `p0-ticket` is *just another state*. It slots into the same promote/demote
-ladder (`testing` to `ticket` to `p0-ticket` to `page`) with no new concepts.
+ladder (`testing` to `ticket` to `p0-ticket` to `page`) with no new concepts, and no new
+Alertmanager logic beyond one more `target` route.
 
 ## Things to watch out for
 
@@ -233,6 +221,9 @@ ladder (`testing` to `ticket` to `p0-ticket` to `page`) with no new concepts.
   expectation. If two states route to the same place, merge them.
 * **Keep `uncaught` quiet but visible.** If it fires on every deploy, people will filter it,
   and you'll have rebuilt the problem it exists to catch. Keep its volume near zero.
+* **Never route on `alertname`.** Per-alert routes put you back to editing Alertmanager config
+  every time an alert changes. Keep routing keyed on `target` (and, for ownership, `team`), and
+  keep the per-alert decisions in the rules.
 * **One label, one meaning.** Don't overload `target` with team, environment, or severity. Route
   ownership with a separate label (`team`, say) using a nested route, so the two dimensions
   stay orthogonal.
@@ -251,7 +242,6 @@ The underlying idea is the same one that makes feature flags and canary rollouts
 firing into `testing` is deployed. It only becomes exposed when someone makes the deliberate,
 reviewable choice to promote it.
 
-Once alerts have a lifecycle, you can build tooling around it: dashboards counting alerts per
-state, a policy that nothing stays in `testing` for more than 30 days, or automatic demotion
-proposals for pages with a low actionable ratio. None of that is possible when an alert is just
+Once alerts have a lifecycle, you can build tooling around it: a policy that nothing stays in `testing` for more than 30
+days, or automatic demotion proposals for pages with a low actionable ratio. None of that is possible when an alert is just
 "on" or "off".
