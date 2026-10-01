@@ -187,6 +187,43 @@ An escalation policy is a timer on the *ticket*, not a window on the clock:
 `p0-ticket` is *just another state*. It slots into the same ladder (`testing`, `ticket`,
 `p0-ticket`, `page`) with no new Alertmanager logic beyond one more `target` route.
 
+## Scaling across teams
+
+The state machine scales to many teams by cloning it, once per team, under a nested `team` route:
+
+```yaml
+route:
+  receiver: uncaught            # the only uncaught stanza in the tree
+  group_by: [alertname, job]
+  routes:
+    - matchers: [team="payments"]
+      routes:
+        - matchers: [target="page"]
+          receiver: payments-pager
+          repeat_interval: 1h
+        - matchers: [target="ticket"]
+          receiver: payments-tickets
+          repeat_interval: 3d
+        - matchers: [target="testing"]
+          receiver: payments-testing
+          repeat_interval: 24h
+    - matchers: [team="search"]
+      routes:
+        # same three states, search's receivers
+```
+
+* **One `uncaught` for the whole tree.** Team routes set no `receiver`, so they inherit the
+  root's. A bad `target` on a valid team matches no state in that team's clone and falls to
+  `uncaught`; an unknown `team` matches no team route and falls to `uncaught`. Don't give each
+  team its own backstop.
+* **Each team owns its destinations.** The states and their meaning are shared. Receivers
+  (pager service, ticket queue, Slack channel) and timing are per team.
+* **Onboarding a team is the only config change.** Adding a team adds one stanza. Adding or
+  changing an alert is still a rule change.
+* **Subdivide the config if it grows.** Alertmanager loads a single file, so keep one file per
+  team in your repo and assemble them into the final config at build time. A shared template
+  keeps the clones identical, so promotion means the same thing for every team.
+
 ## Things to watch out for
 
 * **Keep the state space small.** Each state needs a distinct destination and expectation. If
@@ -197,7 +234,7 @@ An escalation policy is a timer on the *ticket*, not a window on the clock:
   whenever an alert changes. Route on `target` (and `team` for ownership); keep per-alert
   decisions in the rules.
 * **One label, one meaning.** Don't overload `target` with team, environment or severity. Route
-  ownership with a separate label in a nested route.
+  ownership with a separate `team` label in a nested route, as above.
 * **Use `continue` deliberately.** To mirror everything into a firehose or archive, put that
   route first with `continue: true`.
 * **Consider inhibition.** A firing `page` can inhibit the `ticket` and `testing` versions of
