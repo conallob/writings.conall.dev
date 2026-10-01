@@ -26,9 +26,9 @@ that it describes *where an alert should go*, not merely how bad it is.)
 | `testing` | Untrusted. New, or demoted for cleanup. | Email or a Slack channel | None. Cheap to send to, fine to ignore. |
 | `ticket` | Needs an owner or follow-up, but isn't time sensitive. | Ticket queue | Someone triages it within days. |
 | `page` | Time sensitive. Must be addressed within a defined window. | Pager | A human responds within the SLO of the rotation. |
-| *(no match)* | The backstop. Anything that matches none of the above. | An email address or a ticket queue | Someone eventually notices and fixes the label. |
+| `uncaught` | Anything that matches none of the states above. | An email address or a ticket queue | Someone eventually notices and fixes the label. |
 
-That last row isn't a value you set; it's the state an alert lands in when it matches nothing else.
+Unlike the others, `uncaught` isn't a value you set; it's the state an alert lands in when nothing else catches it.
 Every state machine needs a defined behaviour for input it doesn't recognise, and this one is
 no exception.
 
@@ -62,7 +62,7 @@ And Alertmanager routes purely on that label:
 
 ```yaml
 route:
-  receiver: backstop         # default: anything matching no route below
+  receiver: uncaught         # default: anything matching no route below
   group_by: [alertname, job]
   routes:
     - matchers: [target="page"]
@@ -81,7 +81,7 @@ route:
       repeat_interval: 24h
 
 receivers:
-  - name: backstop
+  - name: uncaught
     email_configs:
       - to: alert-routing-owners@example.com
         send_resolved: false
@@ -97,20 +97,20 @@ receivers:
         send_resolved: true
 ```
 
-Two details are doing real work here:
+A few details are doing real work here:
 
-* **The root route is a backstop, and it is not `page`.** An alert with a missing or misspelled
+* **The root route is the `uncaught` state, and it is not `page`.** An alert with a missing or misspelled
   `target` matches none of the child routes and falls through to the root receiver. That receiver
   should be cheap and low-urgency, so failing means failing quiet, but it should also be
   *distinct* from `testing`. `testing` is a deliberate state that people choose and expect to be
-  noisy; the backstop means "this alert is misrouted", and it needs an owner. An email address
+  noisy; `uncaught` means "this alert is misrouted", and it needs an owner. An email address
   or a ticket destination both work: use email if you have a small routing team who'll see it,
   and a ticket if you want someone to be accountable for clearing it.
-* **Treat anything in the backstop as a bug.** The fix is almost always to set a valid `target`
-  on the rule, which moves the alert into the state machine proper. Pair the backstop with a
+* **Treat anything `uncaught` as a bug.** The fix is almost always to set a valid `target`
+  on the rule, which moves the alert into the state machine proper. Pair it with a
   lint check in CI that rejects rules whose `target` isn't one of the known values. That's the
-  kind of thing a static analysis pass over rule files is very good at, and it stops the
-  backstop from becoming a permanent home.
+  kind of thing a static analysis pass over rule files is very good at, and it stops
+  `uncaught` from becoming a permanent home.
 * **Timing parameters belong to the state, not the alert.** `repeat_interval` and `group_wait`
   are properties of how you want to be interrupted, so they live on the route for each state.
   A `page` should re-notify hourly; a `ticket` shouldn't re-notify for days.
@@ -210,7 +210,7 @@ ladder (`testing` to `ticket` to `p0-ticket` to `page`) with no new concepts.
 
 * **Keep the state space small.** Every state needs a distinct destination and a distinct
   expectation. If two states route to the same place, merge them.
-* **Keep the backstop quiet but visible.** If it fires on every deploy, people will filter it,
+* **Keep `uncaught` quiet but visible.** If it fires on every deploy, people will filter it,
   and you'll have rebuilt the problem it exists to catch. Keep its volume near zero.
 * **One label, one meaning.** Don't overload `target` with team, environment, or severity. Route
   ownership with a separate label (`team`, say) using a nested route, so the two dimensions
