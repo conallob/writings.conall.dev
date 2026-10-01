@@ -157,6 +157,27 @@ you can also override at the Alertmanager layer by matching on `alertname` ahead
 That's an escape hatch, not the default. State in the rule is easier to review and audit than
 state hidden in routing.
 
+> **Tip: test the transitions, not just the alert.** Because state is just a label, it's easy
+> to cover with the tooling you probably already have. A `promtool` unit test can assert that the
+> alert fires *with the right `target`* by including it in `exp_labels`, so a promotion or
+> demotion is a two-line diff: the rule and its test. Then replay those same `exp_alerts`
+> fixtures through an ephemeral Alertmanager with
+> [`e2e-alertmanager-test`](https://github.com/conallob/o11y-analysis-tools), part of
+> [o11y-analysis-tools](https://github.com/conallob/o11y-analysis-tools):
+>
+> ```bash
+> docker run -d -p 9093:9093 prom/alertmanager   # skeleton config, receivers stubbed
+> e2e-alertmanager-test --tests=./alerts_test.yml \
+>   --alertmanager-config=./alertmanager.yml --output=full > notifications.txt
+> ```
+>
+> It renders what the notification would actually look like (email, Slack, webhook JSON)
+> using your real routing tree, so a promotion shows up in review as "this now renders as a
+> page", and a typo'd `target` shows up as a notification landing in the wrong place before it merges.
+> It renders output for you to diff rather than asserting on it, so commit or diff
+> `notifications.txt` in CI. Point the ephemeral Alertmanager at a skeleton config that keeps
+> your routes but swaps receiver credentials for local no-ops, so nothing real is ever sent.
+
 ## The advanced case: time-sensitive tickets
 
 Not everything fits neatly into "page now" or "ticket eventually". Some issues are urgent only
