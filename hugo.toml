@@ -92,5 +92,12 @@ name = "Search"
 url = "/search/"
 weight = 40
 
+[outputFormats.MD]
+mediaType = "text/markdown"
+isPlainText = true
+isHTML = false
+noUgly = true
+
 [outputs]
 home = ["HTML", "RSS", "JSON"]
+page = ["HTML", "MD"]
