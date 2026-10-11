@@ -48,8 +48,8 @@ name = "Posts"
 url = "/posts"
 
 [[params.profileMode.buttons]]
-name = "Projects"
-url = "/projects"
+name = "Documents"
+url = "/documents"
 
 [[params.socialIcons]]
 name = "github"
@@ -75,9 +75,9 @@ url = "/posts/"
 weight = 10
 
 [[menu.main]]
-identifier = "projects"
-name = "Projects"
-url = "/projects/"
+identifier = "documents"
+name = "Documents"
+url = "/documents/"
 weight = 20
 
 [[menu.main]]
