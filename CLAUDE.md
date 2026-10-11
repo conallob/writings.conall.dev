@@ -24,7 +24,7 @@ hugo --minify
 | Section | Path | Purpose |
 |---|---|---|
 | Posts | `content/posts/` | Articles and writing |
-| Projects | `content/projects/` | Project showcases |
+| Documents | `content/documents/` | Longer-form documents, and the project portfolio under `content/documents/portfolio/` |
 | About | `content/about.md` | About page |
 | Search | `content/search.md` | Client-side search |
 
@@ -34,8 +34,8 @@ New content uses front matter with `draft: true` by default — set to `false` t
 # Scaffold a new post
 hugo new content posts/my-post.md
 
-# Scaffold a new project
-hugo new content projects/my-project.md
+# Scaffold a new document
+hugo new content documents/my-document.md
 ```
 
 ## Deployment

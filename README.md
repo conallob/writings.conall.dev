@@ -27,6 +27,6 @@ hugo server --buildDrafts
 # New post
 hugo new content posts/my-post.md
 
-# New project
-hugo new content projects/my-project.md
+# New document
+hugo new content documents/my-document.md
 ```

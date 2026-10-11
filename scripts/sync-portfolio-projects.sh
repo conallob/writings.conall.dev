@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Regenerates content/projects/portfolio/ from every public GitHub repo
+# Regenerates content/documents/portfolio/ from every public GitHub repo
 # tagged with the "conall-portfolio" topic (https://github.com/topics/conall-portfolio).
 # The directory is fully owned by this script: every run wipes and
 # rebuilds the generated pages (aside from _index.md) so repos that drop
 # the topic are removed automatically.
 
 TOPIC="conall-portfolio"
-CONTENT_DIR="content/projects/portfolio"
+CONTENT_DIR="content/documents/portfolio"
 API_URL="https://api.github.com/search/repositories"
 PER_PAGE=100
 

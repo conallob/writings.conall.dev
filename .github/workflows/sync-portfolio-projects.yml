@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Sync content/projects/portfolio from the conall-portfolio topic
+      - name: Sync content/documents/portfolio from the conall-portfolio topic
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./scripts/sync-portfolio-projects.sh
@@ -24,11 +24,11 @@ jobs:
       - name: Open pull request
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: "chore: sync content/projects/portfolio from conall-portfolio topic"
+          commit-message: "chore: sync content/documents/portfolio from conall-portfolio topic"
           title: "chore: sync portfolio projects"
           body: |
-            Automated sync of `content/projects/portfolio/` from repositories tagged with the
+            Automated sync of `content/documents/portfolio/` from repositories tagged with the
             [`conall-portfolio`](https://github.com/topics/conall-portfolio) topic on GitHub.
           branch: automation/sync-portfolio-projects
           delete-branch: true
-          add-paths: content/projects/portfolio/**
+          add-paths: content/documents/portfolio/**
