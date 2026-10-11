@@ -1,0 +1,103 @@
+/* Light-mode code blocks. PaperMod draws code blocks near-black in both
+   themes and colours Chroma tokens with the dark Catppuccin Macchiato
+   palette; this gives light mode a soft background and the matching Catppuccin
+   Latte token colours. Dark mode is untouched. PaperMod includes every file in
+   assets/css/extended/ after its own styles. */
+
+:root:not([data-theme="dark"]) {
+    --code-block-bg: rgb(239, 241, 245);
+}
+
+:root:not([data-theme="dark"]) .post-content pre code {
+    color: rgb(76, 79, 105);
+    border: 1px solid rgb(220, 224, 232);
+}
+
+:root:not([data-theme="dark"]) .post-content .highlight:not(table) {
+    border: 1px solid rgb(220, 224, 232);
+}
+
+/* The wrapper already has the border; do not double it on highlighted blocks. */
+:root:not([data-theme="dark"]) .post-content .highlight pre code {
+    border: 0;
+}
+
+:root:not([data-theme="dark"]) .chroma .lnt,
+:root:not([data-theme="dark"]) .chroma .ln { color: rgb(140, 143, 161); }
+:root:not([data-theme="dark"]) .chroma .hl { background-color: rgb(223, 226, 235); }
+
+:root:not([data-theme="dark"]) .chroma .err,
+:root:not([data-theme="dark"]) .chroma .kd,
+:root:not([data-theme="dark"]) .chroma .kt,
+:root:not([data-theme="dark"]) .chroma .sa,
+:root:not([data-theme="dark"]) .chroma .gr,
+:root:not([data-theme="dark"]) .chroma .gt,
+:root:not([data-theme="dark"]) .chroma .gd { color: rgb(210, 15, 57); }
+
+:root:not([data-theme="dark"]) .chroma .k,
+:root:not([data-theme="dark"]) .chroma .kp,
+:root:not([data-theme="dark"]) .chroma .kr,
+:root:not([data-theme="dark"]) .chroma .nt { color: rgb(136, 57, 239); }
+
+:root:not([data-theme="dark"]) .chroma .kc,
+:root:not([data-theme="dark"]) .chroma .ne,
+:root:not([data-theme="dark"]) .chroma .nn,
+:root:not([data-theme="dark"]) .chroma .py,
+:root:not([data-theme="dark"]) .chroma .m,
+:root:not([data-theme="dark"]) .chroma .mb,
+:root:not([data-theme="dark"]) .chroma .mf,
+:root:not([data-theme="dark"]) .chroma .mh,
+:root:not([data-theme="dark"]) .chroma .mi,
+:root:not([data-theme="dark"]) .chroma .il,
+:root:not([data-theme="dark"]) .chroma .mo,
+:root:not([data-theme="dark"]) .chroma .gh,
+:root:not([data-theme="dark"]) .chroma .gu { color: rgb(196, 80, 0); }
+
+:root:not([data-theme="dark"]) .chroma .kn,
+:root:not([data-theme="dark"]) .chroma .ni,
+:root:not([data-theme="dark"]) .chroma .sr { color: rgb(23, 146, 153); }
+
+:root:not([data-theme="dark"]) .chroma .na,
+:root:not([data-theme="dark"]) .chroma .nd,
+:root:not([data-theme="dark"]) .chroma .nf,
+:root:not([data-theme="dark"]) .chroma .fm,
+:root:not([data-theme="dark"]) .chroma .dl,
+:root:not([data-theme="dark"]) .chroma .se { color: rgb(30, 102, 245); }
+
+:root:not([data-theme="dark"]) .chroma .nb,
+:root:not([data-theme="dark"]) .chroma .bp,
+:root:not([data-theme="dark"]) .chroma .nl,
+:root:not([data-theme="dark"]) .chroma .o,
+:root:not([data-theme="dark"]) .chroma .ow { color: rgb(32, 124, 160); }
+
+:root:not([data-theme="dark"]) .chroma .nc,
+:root:not([data-theme="dark"]) .chroma .no { color: rgb(158, 100, 10); }
+
+:root:not([data-theme="dark"]) .chroma .nv,
+:root:not([data-theme="dark"]) .chroma .vc,
+:root:not([data-theme="dark"]) .chroma .vg,
+:root:not([data-theme="dark"]) .chroma .vi,
+:root:not([data-theme="dark"]) .chroma .vm { color: rgb(76, 79, 105); }
+
+:root:not([data-theme="dark"]) .chroma .s,
+:root:not([data-theme="dark"]) .chroma .sb,
+:root:not([data-theme="dark"]) .chroma .sc,
+:root:not([data-theme="dark"]) .chroma .s1,
+:root:not([data-theme="dark"]) .chroma .s2,
+:root:not([data-theme="dark"]) .chroma .si,
+:root:not([data-theme="dark"]) .chroma .sx,
+:root:not([data-theme="dark"]) .chroma .ss,
+:root:not([data-theme="dark"]) .chroma .gi { color: rgb(35, 120, 25); }
+
+:root:not([data-theme="dark"]) .chroma .sd,
+:root:not([data-theme="dark"]) .chroma .sh,
+:root:not([data-theme="dark"]) .chroma .c,
+:root:not([data-theme="dark"]) .chroma .ch,
+:root:not([data-theme="dark"]) .chroma .cm,
+:root:not([data-theme="dark"]) .chroma .c1,
+:root:not([data-theme="dark"]) .chroma .cs,
+:root:not([data-theme="dark"]) .chroma .cp,
+:root:not([data-theme="dark"]) .chroma .cpf { color: rgb(108, 111, 133); }
+
+:root:not([data-theme="dark"]) .chroma .gd,
+:root:not([data-theme="dark"]) .chroma .gi { background-color: transparent; }
