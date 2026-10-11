@@ -2,18 +2,16 @@
 title: "SRE Alerting Guidelines"
 description: "A peer-to-peer style guide for writing effective alerts"
 date: 2026-10-11T00:00:00Z
-lastmod: 2026-10-11T19:50:23Z
+lastmod: 2026-10-11T20:59:15Z
 draft: false
 tags: ["SRE", "Site Reliability", "Monitoring", "Observability", "Alerting", "Prometheus", "On-call", "Style Guide"]
 categories: ["Engineering", "Site Reliability"]
 showToc: true
 TocOpen: true
+showLastMod: true
 ---
 
-Author: [Conall O'Brien](https://www.linkedin.com/in/conall)  
-Status: Published  
-Published: 2026-10-11  
-Last Edited: 2026-10-11
+# Using This Guide with LLMs
 
 > [!TIP]
 > This guide is LLM friendly. The same text is served as plain Markdown at [writings.conall.dev/documents/sre-alerting-guidelines/index.md](https://writings.conall.dev/documents/sre-alerting-guidelines/index.md), and a Claude Code skill reviews alerts against the current guide. Install it with:
@@ -121,13 +119,16 @@ If your service has an [error budget](https://sre.google/sre-book/embracing-risk
 
 E.g.
 
-Service X handles 100M queries per quarter and the SLO is 99.9% available. So the paging alert is configured to be:
+```
+Service X handles 100M queries per quarter and the SLO is 99.9% available.
+So the paging alert is configured to be:
 
-- 100M x (100 - 99.9)% x 1% = 1000 queries fail
+  100M x (100 - 99.9)% x 1% = 1000 queries fail
 
 Service Y has a latency SLO that < 1% of queries can take 2 seconds and serves 100M queries
 
-- 100M x (100 - 99)% x 1% = 10,000 queries are slow
+  100M x (100 - 99)% x 1% = 10,000 queries are slow
+```
 
 > [!TIP]
 > Annotate SLO burn down alerts with the formula used to calculate thresholds, so the alert can be easily maintained
@@ -253,10 +254,10 @@ The curator would like to recognise and thank the following for their invaluable
 
 Additional Reviewers of a Previous Version:
 
-- Rob Eewaschuk
+- Rob Ewaschuk
 - Joel Becker
 - Trevor Mattson-Hamilton
-- Karl Micha
+- Karl-Michael Schneider
 - Kate Ward
 
 # About The Author
