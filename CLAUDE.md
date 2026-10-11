@@ -66,6 +66,12 @@ turns GitHub-style alert blockquotes into styled callouts, and `assets/css/exten
 
 Plain `>` blockquotes are unchanged.
 
+### Code blocks
+
+PaperMod draws fenced code blocks near-black in both themes, with dark-theme syntax colours. In light mode
+`assets/css/extended/code-blocks.css` gives them a soft background and matching Catppuccin Latte token
+colours (the site's Chroma palette is Catppuccin Macchiato). Dark mode is unchanged.
+
 ### Last edited
 
 `layouts/partials/post_meta.html` overrides PaperMod's post meta line to add "Last Edited <date>" (from
@@ -108,7 +114,7 @@ git submodule update --remote themes/PaperMod
 .
 ├── archetypes/       # Content templates
 ├── content/          # Site content (Markdown)
-├── assets/css/extended/  # Site CSS added on top of PaperMod (callouts)
+├── assets/css/extended/  # Site CSS added on top of PaperMod (callouts, light-mode code blocks)
 ├── layouts/          # Custom layout overrides (callout blockquote render hook, head partial, post meta partial)
 ├── static/           # Static assets copied verbatim to public/
 │   └── _headers      # Cloudflare Pages HTTP security headers
