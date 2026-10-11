@@ -68,7 +68,7 @@ Plain `>` blockquotes are unchanged.
 
 ### Last edited
 
-`layouts/partials/post_meta.html` overrides PaperMod's post meta line to add "Last edited <date>" (from
+`layouts/partials/post_meta.html` overrides PaperMod's post meta line to add "Last Edited <date>" (from
 front matter `lastmod`) next to the published date, in the page header above the table of contents. It
 is opt-in per page: set `showLastMod: true` in the front matter. Other pages are unchanged.
 
