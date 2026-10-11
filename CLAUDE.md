@@ -66,6 +66,12 @@ turns GitHub-style alert blockquotes into styled callouts, and `assets/css/exten
 
 Plain `>` blockquotes are unchanged.
 
+### Last edited
+
+`layouts/partials/post_meta.html` overrides PaperMod's post meta line to add "Last edited <date>" (from
+front matter `lastmod`) next to the published date, in the page header above the table of contents. It
+is opt-in per page: set `showLastMod: true` in the front matter. Other pages are unchanged.
+
 ### Scheduled posts
 
 `hugo.toml` sets `buildFuture = false`, so a post with a future `date` is excluded from the build
@@ -102,7 +108,7 @@ git submodule update --remote themes/PaperMod
 ├── archetypes/       # Content templates
 ├── content/          # Site content (Markdown)
 ├── assets/css/extended/  # Site CSS added on top of PaperMod (callouts)
-├── layouts/          # Custom layout overrides (callout blockquote render hook, head partial)
+├── layouts/          # Custom layout overrides (callout blockquote render hook, head partial, post meta partial)
 ├── static/           # Static assets copied verbatim to public/
 │   └── _headers      # Cloudflare Pages HTTP security headers
 ├── themes/
