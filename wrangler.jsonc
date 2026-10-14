@@ -1,10 +1,23 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "writings-conall-dev",
   "compatibility_date": "2026-03-28",
   "assets": {
-    "directory": "./public"
+    "directory": "./public",
+    // Hugo emits directory-style URLs (/posts/foo/); redirect to add/remove
+    // trailing slashes so each page has one canonical URL.
+    "html_handling": "auto-trailing-slash",
+    // Serve Hugo's generated 404.html (with a 404 status) for unknown paths.
+    "not_found_handling": "404-page"
   },
   "build": {
     "command": "bash scripts/ci-build.sh"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "persist": true
+    }
   }
 }
