@@ -72,6 +72,12 @@ PaperMod draws fenced code blocks near-black in both themes, with dark-theme syn
 `assets/css/extended/code-blocks.css` gives them a soft background and matching Catppuccin Latte token
 colours (the site's Chroma palette is Catppuccin Macchiato). Dark mode is unchanged.
 
+### Favicons
+
+PaperMod's `head.html` links `favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`
+and `safari-pinned-tab.svg` from the site root, so they live in `static/`. Without them every page view
+produces several 404s. They are a plain "C" monogram; to change the icon, replace those five files.
+
 ### Last edited
 
 `layouts/partials/post_meta.html` overrides PaperMod's post meta line to add "Last Edited <date>" (from
@@ -117,7 +123,8 @@ git submodule update --remote themes/PaperMod
 ├── assets/css/extended/  # Site CSS added on top of PaperMod (callouts, light-mode code blocks)
 ├── layouts/          # Custom layout overrides (callout blockquote render hook, head partial, post meta partial)
 ├── static/           # Static assets copied verbatim to public/
-│   └── _headers      # Cloudflare Pages HTTP security headers
+│   ├── _headers      # Cloudflare Pages HTTP security headers
+│   └── favicon*, apple-touch-icon.png, safari-pinned-tab.svg  # site icons
 ├── themes/
 │   └── PaperMod/     # Theme (git submodule)
 └── hugo.toml         # Site configuration
