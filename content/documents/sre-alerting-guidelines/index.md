@@ -2,7 +2,7 @@
 title: "SRE Alerting Guidelines"
 description: "A peer-to-peer style guide for writing effective alerts"
 date: 2026-10-11T00:00:00Z
-lastmod: 2026-10-12T09:05:02Z
+lastmod: 2026-10-28T01:01:32Z
 draft: false
 tags: ["SRE", "Site Reliability", "Monitoring", "Observability", "Alerting", "Prometheus", "On-call", "Style Guide"]
 categories: ["Engineering", "Site Reliability"]
@@ -71,7 +71,8 @@ Each principle represents an important goal; at times a compromise between two p
 
 - Maintain effective monitoring with minimal time commitment
 - Every alert requires ongoing maintenance and tuning or risks an increase in false positives or negatives.
-- Aim to have the smallest number of alerts that grant adequately thorough coverage; defence in depth may be appropriate in some cases, but excessive redundant or overlapping alerts increases maintenance cost and ultimately quality.
+- Aim to have the smallest number of alerts that grant adequately thorough coverage; defence in depth may be appropriate in some cases, but increases maintenance and ultimately
+  compromises/reduces quality unless actively managed.
 
 ## Guidelines {#guidelines}
 
@@ -252,12 +253,12 @@ The curator would like to recognise and thank the following for their invaluable
 - Laura Nolan
 - Štěpán Davidovič
 - Trisha Weir
+- Joel Becker
 - The Late Cody Smith
 
 Additional Reviewers of a Previous Version:
 
 - Rob Ewaschuk
-- Joel Becker
 - Trevor Mattson-Hamilton
 - Karl-Michael Schneider
 - Kate Ward
