@@ -7,7 +7,7 @@ description: "A helper tool to sync a tree of Jira tasks into beads tasks, and s
 params:
   githubUrl: "https://github.com/conallob/jira-beads-sync"
   language: "Go"
-  stars: 17
+  stars: 18
 ---
 
 A helper tool to sync a tree of Jira tasks into beads tasks, and sync beads state back to Jira
