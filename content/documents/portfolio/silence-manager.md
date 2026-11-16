@@ -1,7 +1,7 @@
 ---
 title: "silence-manager"
 date: 2025-10-11T11:30:38Z
-lastmod: 2026-07-25T03:17:20Z
+lastmod: 2026-11-13T12:22:18Z
 draft: false
 description: "A small utility to couple an Alertmanager silence and a tracking ticket in sync"
 params:
