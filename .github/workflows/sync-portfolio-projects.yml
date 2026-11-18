@@ -22,7 +22,7 @@ jobs:
         run: ./scripts/sync-portfolio-projects.sh
 
       - name: Open pull request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: "chore: sync content/documents/portfolio from conall-portfolio topic"
           title: "chore: sync portfolio projects"
